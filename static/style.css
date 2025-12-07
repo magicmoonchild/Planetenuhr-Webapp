@@ -1,0 +1,425 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #e0e0e0;
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+h1 {
+    color: #ffcc00;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2.2em;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.main-content {
+    display: flex;
+    gap: 15px;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+/* Canvas Container */
+.canvas-container {
+    flex: 0 0 auto;
+    position: relative;
+}
+
+#planetCanvas {
+    border: 2px solid #4a4a6a;
+    border-radius: 12px;
+    background: #000000;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    cursor: pointer;
+    margin-top: 60px;
+    margin-bottom: 50px;
+    touch-action: pan-x pan-y;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#planetCanvas:active {
+    cursor: grabbing;
+}
+
+/* Zeitsteuerung über der Karte */
+.time-controls-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.time-controls-compact {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background: rgba(42, 42, 62, 0.9);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #4a4a6a;
+}
+
+#datumInput {
+    padding: 6px 8px;
+    border: 1px solid #5a5a8a;
+    border-radius: 4px;
+    background: #2a2a3a;
+    color: white;
+    font-size: 12px;
+    width: 180px;
+}
+
+.time-controls-compact button {
+    padding: 6px 10px;
+    font-size: 11px;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.quick-time-buttons-compact {
+    display: flex;
+    gap: 4px;
+}
+
+.quick-time-buttons-compact button {
+    padding: 4px 6px;
+    font-size: 10px;
+    min-width: 50px;
+}
+
+/* Zoom-Steuerung unter der Karte */
+.zoom-controls-under {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 5;
+}
+
+.zoom-presets-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    background: rgba(42, 42, 62, 0.95);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #4a4a6a;
+}
+
+.zoom-presets-row button {
+    padding: 6px 8px;
+    font-size: 11px;
+    margin: 0;
+    white-space: nowrap;
+    min-width: 65px;
+    transition: all 0.2s ease;
+}
+
+.zoom-presets-row button:hover {
+    transform: translateY(-1px);
+}
+
+.zoom-presets-row span {
+    color: #ffcc00;
+    font-weight: bold;
+    font-size: 12px;
+    min-width: 90px;
+    text-align: center;
+    background: rgba(255, 204, 0, 0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+/* Zentrier-Button speziell stylen */
+.zoom-presets-row button:nth-child(5) {
+    background: linear-gradient(135deg, #8a4a6a 0%, #7a3a5a 100%);
+    border: 1px solid #aa6a8a;
+    font-weight: bold;
+}
+
+.zoom-presets-row button:nth-child(5):hover {
+    background: linear-gradient(135deg, #9a5a7a 0%, #8a4a6a 100%);
+}
+
+/* Max Realismus Button */
+.zoom-presets-row button:nth-child(6) {
+    background: linear-gradient(135deg, #4a8a6a 0%, #3a7a5a 100%);
+    border: 1px solid #6aaa8a;
+}
+
+.zoom-presets-row button:nth-child(6):hover {
+    background: linear-gradient(135deg, #5a9a7a 0%, #4a8a6a 100%);
+}
+
+/* Erweiterte Play-Buttons mit Rückwärts-Funktion */
+.playback-overlay {
+    position: absolute;
+    bottom: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 6px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.play-btn.rounded {
+    background: rgba(30, 30, 45, 0.4);
+    color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    pointer-events: all;
+    backdrop-filter: blur(5px);
+    min-width: 50px;
+    opacity: 0.8;
+}
+
+.play-btn.rounded.reverse {
+    background: rgba(45, 30, 45, 0.4);
+    border-color: rgba(255, 100, 255, 0.3);
+}
+
+.play-btn.rounded:hover {
+    background: rgba(50, 50, 75, 0.6);
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+.play-btn.rounded.playing {
+    background: rgba(0, 150, 0, 0.7);
+    color: white;
+    opacity: 1;
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.play-btn.rounded.reverse.playing {
+    background: rgba(150, 0, 0, 0.7);
+}
+
+/* Schmales Info-Fenster */
+.info-panel {
+    flex: 0 0 280px;
+    background: rgba(42, 42, 62, 0.9);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid #4a4a6a;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.control-group h3 {
+    color: #ffcc00;
+    margin-top: 0;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #4a4a6a;
+    padding-bottom: 6px;
+    font-size: 1.1em;
+}
+
+/* Allgemeine Button-Styles */
+button {
+    background: linear-gradient(135deg, #4a4a6a 0%, #3a3a5a 100%);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    margin: 3px 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #5a5a8a 0%, #4a4a7a 100%);
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Touch-Optimierungen für Buttons */
+button:active, .play-btn.rounded:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+/* Info Content */
+.info-content {
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.default-info p {
+    margin: 5px 0;
+    color: #aaa;
+}
+
+.planet-details {
+    color: #e0e0e0;
+}
+
+.planet-details h4 {
+    color: #ffcc00;
+    margin: 8px 0 4px 0;
+    border-bottom: 1px solid #4a4a6a;
+    padding-bottom: 2px;
+    font-size: 12px;
+}
+
+.planet-details p {
+    margin: 2px 0;
+    font-size: 10px;
+    line-height: 1.3;
+}
+
+.planet-details strong {
+    color: #ffcc00;
+}
+
+/* Status */
+.status {
+    margin-top: 15px;
+    padding: 10px;
+    background: rgba(42, 42, 62, 0.8);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 12px;
+    border: 1px solid #4a4a6a;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .main-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .info-panel {
+        width: 100%;
+        max-width: 600px;
+        margin-top: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+
+    h1 {
+        font-size: 1.8em;
+    }
+
+    #planetCanvas {
+        width: 100%;
+        height: auto;
+        margin-top: 70px;
+        margin-bottom: 60px;
+    }
+
+    .time-controls-compact {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    #datumInput {
+        width: 150px;
+    }
+
+    .play-btn.rounded {
+        padding: 6px 10px;
+        font-size: 10px;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .playback-overlay {
+        gap: 4px;
+        bottom: 70px;
+    }
+
+    .zoom-presets-row {
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .zoom-presets-row button {
+        min-width: 70px;
+        font-size: 10px;
+        padding: 5px 8px;
+        min-height: 36px;
+    }
+
+    .info-panel {
+        padding: 12px;
+    }
+
+    /* Bessere Touch-Targets für Mobilgeräte */
+    button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .time-controls-compact button {
+        min-height: 36px;
+    }
+}
+
+/* Verbesserte Lesbarkeit auf kleinen Bildschirmen */
+@media (max-width: 480px) {
+    .time-controls-compact {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #datumInput {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .quick-time-buttons-compact {
+        justify-content: space-between;
+    }
+
+    .quick-time-buttons-compact button {
+        flex: 1;
+        min-width: auto;
+    }
+
+    .zoom-presets-row {
+        flex-direction: column;
+    }
+
+    .playback-overlay {
+        flex-wrap: wrap;
+        justify-content: center;
+        bottom: 80px;
+    }
+}
