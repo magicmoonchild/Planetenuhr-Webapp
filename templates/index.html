@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planetenuhr</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Planetenuhr</h1>
+
+        <div class="main-content">
+            <!-- Canvas in der Mitte mit Zeitsteuerung und Play-Buttons -->
+            <div class="canvas-container">
+                <!-- Zeitsteuerung über der Karte -->
+                <div class="time-controls-overlay">
+                    <div class="time-controls-compact">
+                        <input type="text" id="datumInput">
+                        <button onclick="handleUpdateClick()">Aktualisieren</button>
+                        <div class="quick-time-buttons-compact">
+                            <button onclick="adjustTime('year', -1)">-1 Jahr</button>
+                            <button onclick="adjustTime('month', -1)">-1 Monat</button>
+                            <button onclick="adjustTime('day', -1)">-1 Tag</button>
+                            <button onclick="adjustTime('day', 1)">+1 Tag</button>
+                            <button onclick="adjustTime('month', 1)">+1 Monat</button>
+                            <button onclick="adjustTime('year', 1)">+1 Jahr</button>
+                        </div>
+                    </div>
+                </div>
+
+                <canvas id="planetCanvas" width="600" height="600"></canvas>
+
+                <!-- Anpassung der Zoom-Buttons -->
+                <!-- In den Zoom-Controls unter der Karte -->
+                <div class="zoom-controls-under">
+                    <div class="zoom-presets-row">
+                        <button onclick="setZoomPreset(-30)" title="Lokale Galaxiengruppe">Galaxien</button>
+                        <button onclick="setZoomPreset(-20)" title="Milchstraßen-Nachbarn">Sterne</button>
+                        <button onclick="setZoomPreset(-10)" title="Sonnensystem">Planeten</button>
+                        <button onclick="changeZoom(-1)" title="Herauszoomen">−</button>
+                        <span id="zoomDisplay">Level: -10</span>
+                        <button onclick="handlePlusZoom()" title="Hineinzoomen und zentrieren">+</button>
+                        <button onclick="centerOnPlanet()" title="Ausgewählten Himmelskörper zentrieren">Med</button>
+                        <button onclick="setZoomPreset(20)" title="Maximale Realismus-Darstellung mit Zentrierung">Max</button>
+                        <!-- NEU: Clear Selection Button -->
+                        <button onclick="clearSelection()" title="Auswahl aufheben" style="background: #8a4a4a;">❌</button>
+                    </div>
+                </div>
+
+                <!-- Erweiterte Play-Buttons mit Rückwärts-Funktion -->
+                <!-- Erweiterte Play-Buttons mit neuen Icons -->
+                <div class="playback-overlay">
+                    <button class="play-btn rounded reverse" id="playReverse4" onclick="togglePlayback('year', -1)" title="-1 Jahr/Sek">
+                        ◀◀◀
+                    </button>
+                    <button class="play-btn rounded reverse" id="playReverse3" onclick="togglePlayback('month', -1)" title="-1 Monat/Sek">
+                        ◀◀
+                    </button>
+                    <button class="play-btn rounded reverse" id="playReverse2" onclick="togglePlayback('day', -1)" title="-1 Tag/Sek">
+                        ◀
+                    </button>
+                    <button class="play-btn rounded" id="playRealtime" onclick="togglePlayback('realtime')" title="Echtzeit">
+                        ↻
+                    </button>
+                    <button class="play-btn rounded" id="playSpeed2" onclick="togglePlayback('day', 1)" title="+1 Tag/Sek">
+                        ▶
+                    </button>
+                    <button class="play-btn rounded" id="playSpeed3" onclick="togglePlayback('month', 1)" title="+1 Monat/Sek">
+                        ▶▶
+                    </button>
+                    <button class="play-btn rounded" id="playSpeed4" onclick="togglePlayback('year', 1)" title="+1 Jahr/Sek">
+                        ▶▶▶
+                    </button>
+                </div>
+            </div>
+
+            <!-- Schmales Info-Fenster neben der Karte -->
+            <div class="info-panel">
+                <div class="control-group">
+                    <h3 id="infoTitle">Information</h3>
+                    <div class="info-content" id="planetInfo">
+                        <div class="default-info">
+                            <p>• Klicke auf einen Himmelskörper für Details</p>
+                            <p>• Halte Maustaste/Touch zum Verschieben</p>
+                            <p>• Zoom: -10 (didaktisch) bis +20 (realistisch)</p>
+                            <p>• Play-Buttons: Verschiedene Geschwindigkeiten</p>
+                        </div>
+                        <div class="planet-details" id="planetDetails" style="display: none;">
+                            <!-- Wird dynamisch gefüllt -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="status" class="status"></div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
