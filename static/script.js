@@ -1,5 +1,4 @@
 // --- KONSTANTEN ---
-
 const FENSTER_GROESSE = 600;
 const ZENTRUM = FENSTER_GROESSE / 2;
 const UMRANDE_GROESSE = 40;
